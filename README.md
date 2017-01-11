@@ -17,6 +17,10 @@ To compile `pbzx`, do
 
 ## Changelog
 
+__v1.0.2__
+
+- Add `-v` flag to print version of `pbzx`
+
 __v1.0.1__
 
 - Support unpacking from stdin and and plain pbzx files (see new command-line

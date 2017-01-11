@@ -30,25 +30,27 @@
 
 #define XBSZ 4 * 1024
 #define ZBSZ 1024 * XBSZ
+#define VERSION "1.0.2"
 
 /* Structure to hold the command-line options. */
 struct options {
-    bool stdin;  /* True if data should be read from stdin. */
-    bool noxar;  /* The input data is not a XAR archive but the pbzx Payload. */
-    bool help;   /* Print usage with details and exit. */
+    bool stdin;    /* True if data should be read from stdin. */
+    bool noxar;    /* The input data is not a XAR archive but the pbzx Payload. */
+    bool help;     /* Print usage with details and exit. */
+    bool version;  /* Print version and exit. */
 };
 
 /* Prints usage information and exit. Optionally, displays an error message and
  * exits with an error code. */
 static void usage(char const* error) {
-    fprintf(stderr, "usage: pbzx [-n] [-] [filename]\n");
+    fprintf(stderr, "usage: pbzx [-v] [-h] [-n] [-] [filename]\n");
     if (error) {
         fprintf(stderr, "error: %s\n", error);
         exit(EINVAL);
     }
     fprintf(stderr,
         "\n"
-        "pbzx stream parser\n"
+        "pbzx v" VERSION " stream parser\n"
         "https://github.com/NiklasRosenstein/pbzx\n"
         "\n"
         "Licensed under GNU GPL v3.\n"
@@ -56,6 +58,12 @@ static void usage(char const* error) {
         "Copyright (C) 2015  PHPdev32\n"
         "\n"
     );
+    exit(0);
+}
+
+/* Prints the version and exits. */
+static void version() {
+    printf("pbzx v" VERSION "\n");
     exit(0);
 }
 
@@ -69,6 +77,7 @@ static void parse_args(int* argc, char const** argv, struct options* opts) {
         if      (strcmp(argv[i], "-")  == 0) opts->stdin = true;
         else if (strcmp(argv[i], "-n") == 0) opts->noxar = true;
         else if (strcmp(argv[i], "-h") == 0) opts->help = true;
+        else if (strcmp(argv[i], "-v") == 0) opts->version = true;
         else usage("unrecognized flag");
         /* Move all remaining arguments to the front. */
         for (int j = 0; j < (*argc-1); ++j) {
@@ -193,6 +202,7 @@ int main(int argc, const char** argv) {
     /* Parse and validate command-line flags and arguments. */
     struct options opts = {0};
     parse_args(&argc, argv, &opts);
+    if (opts.version) version();
     if (opts.help) usage(NULL);
     if (!opts.stdin && argc < 2)
         usage("missing filename argument");
