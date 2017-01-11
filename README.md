@@ -10,7 +10,7 @@ outputs to stdout to be unpacked with `cpio`. Note that `.pkg` files are plain
     pbzx SomePkg.pkg | cpio -i  # or
     pbzx -n Payload  | cpio -i
 
-  [source]: www.tonymacx86.com/general-help/135458-pbzx-stream-parser.html
+  [source]: http://www.tonymacx86.com/general-help/135458-pbzx-stream-parser.html
 
 To compile `pbzx`, do
 
