@@ -7,7 +7,8 @@ Pbzx is a format employed in later versions of OSX disk images (starting with
 outputs to stdout to be unpacked with `cpio`. Note that `.pkg` files are plain
 `.xar` archives.
 
-    pbzx SomePkg.pkg | cpio -i
+    pbzx SomePkg.pkg | cpio -i  # or
+    pbzx -n Payload  | cpio -i
 
   [source]: www.tonymacx86.com/general-help/135458-pbzx-stream-parser.html
 
