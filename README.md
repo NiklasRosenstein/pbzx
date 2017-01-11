@@ -10,11 +10,17 @@ outputs to stdout to be unpacked with `cpio`. Note that `.pkg` files are plain
     pbzx SomePkg.pkg | cpio -i  # or
     pbzx -n Payload  | cpio -i
 
-  [source]: http://www.tonymacx86.com/general-help/135458-pbzx-stream-parser.html
-
 To compile `pbzx`, do
 
     clang -llzma -lxar -I /usr/local/include pbzx.c -o pbzx
+
+> If `<lzma.h>` or `<xar/xar.h>` are missing, install them with [Homebrew]
+> using
+>
+>     brew install xz && brew link xz
+
+  [source]: http://www.tonymacx86.com/general-help/135458-pbzx-stream-parser.html
+  [Homebrew]: http://brew.sh/
 
 ## Changelog
 
