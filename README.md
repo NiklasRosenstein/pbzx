@@ -19,6 +19,10 @@ To compile `pbzx`, do
 >
 >     brew install xz && brew link xz
 
+You can also install `pbzx` with [Homebrew] using
+
+    brew install https://raw.githubusercontent.com/NiklasRosenstein/pbzx/master/pbzx.rb
+
   [source]: http://www.tonymacx86.com/general-help/135458-pbzx-stream-parser.html
   [Homebrew]: http://brew.sh/
 
