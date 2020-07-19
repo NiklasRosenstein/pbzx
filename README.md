@@ -10,9 +10,22 @@ outputs to stdout to be unpacked with `cpio`. Note that `.pkg` files are plain
     pbzx SomePkg.pkg | cpio -i  # or
     pbzx -n Payload  | cpio -i
 
-To compile `pbzx`, do
+# dependencies
 
-    clang -llzma -lxar -I /usr/local/include pbzx.c -o pbzx
+    libc clang xar liblzma
+
+# install
+
+To compile pbzx, do
+
+    make
+
+To install pbzx, do
+
+    sudo make install
+
+    Configure installation directory with PREFIX in Makefile. (Default is /usr/local.)
+
 
 > If `<lzma.h>` or `<xar/xar.h>` are missing, install them with [Homebrew]
 > using
