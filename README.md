@@ -22,12 +22,6 @@ To compile `pbzx`, do
   [source]: http://www.tonymacx86.com/general-help/135458-pbzx-stream-parser.html
   [Homebrew]: http://brew.sh/
 
-## Install via Homebrew
-
-You can install `pbzx` via Homebrew now!
-
-    $ brew install pbzx
-
 ## Changelog
 
 __v1.0.2__
