@@ -36,11 +36,12 @@ jobs:
           make clean
           make LIBS="$(brew --prefix)/lib/liblzma.a -lxar"
 
-      - name: Verify no Homebrew dylibs linked
+      - name: Verify only system dylibs linked
         run: |
           otool -L pbzx
-          if otool -L pbzx | grep -q '/opt/homebrew\|/usr/local/opt'; then
-            echo "ERROR: Binary links against Homebrew dylibs"
+          if otool -L pbzx | tail -n +2 | grep -v '/usr/lib/' | grep -q .; then
+            echo "ERROR: Binary links against non-system dylibs:"
+            otool -L pbzx | tail -n +2 | grep -v '/usr/lib/'
             exit 1
           fi
 
