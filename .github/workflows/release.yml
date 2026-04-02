@@ -1,0 +1,83 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        include:
+          - runner: macos-latest
+            arch: arm64
+            deployment_target: '11.0'
+          - runner: macos-13
+            arch: x86_64
+            deployment_target: '10.13'
+    runs-on: ${{ matrix.runner }}
+    env:
+      MACOSX_DEPLOYMENT_TARGET: ${{ matrix.deployment_target }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: brew install xz
+
+      - name: Run tests
+        run: make test
+
+      - name: Build release binary (static liblzma)
+        run: |
+          make clean
+          make LIBS="$(brew --prefix)/lib/liblzma.a -lxar"
+
+      - name: Verify no Homebrew dylibs linked
+        run: |
+          otool -L pbzx
+          if otool -L pbzx | grep -q '/opt/homebrew\|/usr/local/opt'; then
+            echo "ERROR: Binary links against Homebrew dylibs"
+            exit 1
+          fi
+
+      - name: Rename binary
+        run: mv pbzx pbzx-darwin-${{ matrix.arch }}
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: pbzx-darwin-${{ matrix.arch }}
+          path: pbzx-darwin-${{ matrix.arch }}
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/download-artifact@v4
+        with:
+          merge-multiple: true
+
+      - name: Create or update GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          chmod +x pbzx-darwin-*
+          tag="${{ github.ref_name }}"
+
+          if gh release view "$tag" >/dev/null 2>&1; then
+            gh release upload "$tag" \
+              --clobber \
+              pbzx-darwin-arm64 \
+              pbzx-darwin-x86_64
+          else
+            gh release create "$tag" \
+              --title "$tag" \
+              --generate-notes \
+              pbzx-darwin-arm64 \
+              pbzx-darwin-x86_64
+          fi
