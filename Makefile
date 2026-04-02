@@ -18,10 +18,6 @@ all: pbzx
 pbzx: pbzx.c
 	$(CC) $(CFLAGS) $(INCLUDES) $< -o $@ $(LDFLAGS) $(LIBS)
 
-# Download greatest.h test framework
-tests/greatest.h:
-	curl -sL -o $@ https://raw.githubusercontent.com/silentbicycle/greatest/v1.5.0/greatest.h
-
 # Build C unit test binary
 test_pbzx: tests/test_pbzx.c pbzx.c tests/greatest.h
 	$(CC) $(CFLAGS) $(INCLUDES) -DTESTING -I tests $< -o $@ $(LDFLAGS) $(LIBS)

@@ -7,6 +7,8 @@ set -euo pipefail
 
 PBZX="./pbzx"
 FIXTURES="tests/fixtures"
+TMPDIR_TEST=$(mktemp -d)
+trap 'rm -rf "$TMPDIR_TEST"' EXIT
 PASS=0
 FAIL=0
 SKIP=0
@@ -114,18 +116,16 @@ fi
 
 # D2: Valid plain chunk (16 MiB)
 # Compare using checksums to avoid shell variable size limits
-if "$PBZX" -n "$FIXTURES/valid_plain.pbzx" 2>/dev/null | md5 -q > /tmp/pbzx_test_got.md5; then
-    expected_md5=$(md5 -q "$FIXTURES/valid_plain.expected")
-    got_md5=$(cat /tmp/pbzx_test_got.md5)
-    if [ "$got_md5" = "$expected_md5" ]; then
+if "$PBZX" -n "$FIXTURES/valid_plain.pbzx" 2>/dev/null | shasum -a 256 > "$TMPDIR_TEST/got.sha"; then
+    expected_sha=$(shasum -a 256 "$FIXTURES/valid_plain.expected" | awk '{print $1}')
+    got_sha=$(awk '{print $1}' "$TMPDIR_TEST/got.sha")
+    if [ "$got_sha" = "$expected_sha" ]; then
         pass "D2: valid plain chunk"
     else
-        fail "D2: valid plain chunk" "md5 mismatch: got=$got_md5 expected=$expected_md5"
+        fail "D2: valid plain chunk" "sha256 mismatch: got=$got_sha expected=$expected_sha"
     fi
-    rm -f /tmp/pbzx_test_got.md5
 else
     fail "D2: valid plain chunk" "non-zero exit"
-    rm -f /tmp/pbzx_test_got.md5
 fi
 
 # D3: Valid multi-chunk LZMA
@@ -213,18 +213,16 @@ else
 fi
 
 # D10: Large chunk (>4KB, multiple read iterations)
-if "$PBZX" -n "$FIXTURES/large_chunk.pbzx" 2>/dev/null | md5 -q > /tmp/pbzx_test_got.md5; then
-    expected_md5=$(md5 -q "$FIXTURES/large_chunk.expected")
-    got_md5=$(cat /tmp/pbzx_test_got.md5)
-    if [ "$got_md5" = "$expected_md5" ]; then
+if "$PBZX" -n "$FIXTURES/large_chunk.pbzx" 2>/dev/null | shasum -a 256 > "$TMPDIR_TEST/got.sha"; then
+    expected_sha=$(shasum -a 256 "$FIXTURES/large_chunk.expected" | awk '{print $1}')
+    got_sha=$(awk '{print $1}' "$TMPDIR_TEST/got.sha")
+    if [ "$got_sha" = "$expected_sha" ]; then
         pass "D10: large chunk (multi-read)"
     else
-        fail "D10: large chunk" "md5 mismatch: got=$got_md5 expected=$expected_md5"
+        fail "D10: large chunk" "sha256 mismatch: got=$got_sha expected=$expected_sha"
     fi
-    rm -f /tmp/pbzx_test_got.md5
 else
     fail "D10: large chunk" "non-zero exit"
-    rm -f /tmp/pbzx_test_got.md5
 fi
 
 # ========== E. Error Handling ==========

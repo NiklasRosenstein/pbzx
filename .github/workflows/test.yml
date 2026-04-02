@@ -12,7 +12,7 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Install dependencies
-        run: brew install xz
+        run: brew install xz xar
 
       - name: Run tests
         run: make test

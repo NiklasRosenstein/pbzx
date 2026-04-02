@@ -13,7 +13,6 @@ PBZX stream format:
 import lzma
 import os
 import struct
-import sys
 
 FIXTURES_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "fixtures")
 BIT24 = 1 << 24
@@ -73,21 +72,14 @@ def gen_valid_single_lzma():
 def gen_valid_plain():
     """D2: Valid stream with a single plain chunk.
 
-    Plain chunks have length == 0x1000000 (16 MiB). The actual data written
-    must be exactly that size for the parser to consume it correctly.
-    We use a smaller repeated pattern but the length field is 0x1000000.
+    The parser reads plain chunks in XBSZ (4096 byte) increments and keeps
+    consuming data until the full declared length has been read. Because the
+    format uses `length == 0x1000000` to identify a plain chunk, we cannot
+    generate a smaller plain fixture without changing the format semantics.
 
-    NOTE: Looking at the code more carefully, plain chunks are read in XBSZ
-    (4096 byte) increments and the loop runs while length > 0, decrementing
-    by min(XBSZ, length) each iteration. So the data must be exactly
-    0x1000000 bytes. That's 16 MiB which is too large for a test fixture.
-
-    Instead we'll create a small plain chunk by manipulating the format:
-    actually, the code checks `length == 0x1000000` to determine if it's
-    plain. We cannot use a different length for plain data. So we'll skip
-    the full 16 MiB test and use a smaller integration test approach.
-
-    For testing purposes, we create a 16 MiB fixture but keep it simple.
+    This fixture therefore intentionally creates the full 16 MiB payload, but
+    uses a simple repeating pattern so the data remains deterministic and easy
+    to generate.
     """
     # Use a small repeating pattern to keep things manageable
     # 16 MiB = 16777216 bytes
