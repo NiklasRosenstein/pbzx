@@ -4,6 +4,7 @@
  * Compiled with -DTESTING to exclude main() from pbzx.c.
  */
 
+#include <stdint.h>
 #include <unistd.h>
 
 #include "greatest.h"
@@ -47,8 +48,8 @@ SUITE(suite_min) {
 TEST test_stream_init_zeros_fields(void) {
     struct stream s;
     s.type = 99;
-    s.xar = (xar_t)0xdeadbeef;
-    s.fp = (FILE*)0xdeadbeef;
+    s.xar = (xar_t)(uintptr_t)0xdeadbeef;
+    s.fp = (FILE*)(uintptr_t)0xdeadbeef;
     stream_init(&s);
     ASSERT_EQ(0, s.type);
     ASSERT_EQ(NULL, s.xar);

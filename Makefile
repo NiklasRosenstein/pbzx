@@ -5,8 +5,8 @@ PREFIX   ?= /usr/local
 # Detect Homebrew prefix (macOS)
 HOMEBREW := $(shell brew --prefix 2>/dev/null)
 ifdef HOMEBREW
-INCLUDES := -I$(HOMEBREW)/include
-LDFLAGS  := -L$(HOMEBREW)/lib
+INCLUDES += -I$(HOMEBREW)/include
+LDFLAGS  += -L$(HOMEBREW)/lib
 endif
 
 LIBS := -llzma -lxar
