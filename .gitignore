@@ -31,3 +31,10 @@
 # Debug files
 *.dSYM/
 *.su
+
+# Build outputs
+/pbzx
+/test_pbzx
+
+# Test artifacts
+/tests/fixtures/

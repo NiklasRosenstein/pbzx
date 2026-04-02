@@ -198,6 +198,7 @@ static inline size_t cpio_out(char *buffer, size_t size) {
     return c;
 }
 
+#ifndef TESTING
 int main(int argc, const char** argv) {
     /* Parse and validate command-line flags and arguments. */
     struct options opts = {0};
@@ -294,3 +295,4 @@ int main(int argc, const char** argv) {
     if (!opts.stdin) stream_close(&stream);
     return 0;
 }
+#endif
