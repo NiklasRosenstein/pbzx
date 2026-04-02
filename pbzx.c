@@ -34,7 +34,7 @@
 
 /* Structure to hold the command-line options. */
 struct options {
-    bool stdin;    /* True if data should be read from stdin. */
+    bool read_stdin;    /* True if data should be read from stdin. */
     bool noxar;    /* The input data is not a XAR archive but the pbzx Payload. */
     bool help;     /* Print usage with details and exit. */
     bool version;  /* Print version and exit. */
@@ -76,13 +76,13 @@ static void parse_args(int argc, char const** argv, struct options* opts) {
             if (opts->filename) usage("unhandled positional argument(s)");
             opts->filename = argv[i];
         }
-        else if (strcmp(argv[i], "-")  == 0) opts->stdin = true;
+        else if (strcmp(argv[i], "-")  == 0) opts->read_stdin = true;
         else if (strcmp(argv[i], "-n") == 0) opts->noxar = true;
         else if (strcmp(argv[i], "-h") == 0) opts->help = true;
         else if (strcmp(argv[i], "-v") == 0) opts->version = true;
         else usage("unrecognized flag");
     }
-    if (opts->stdin && opts->filename) usage("unhandled positional argument(s)");
+    if (opts->read_stdin && opts->filename) usage("unhandled positional argument(s)");
 }
 
 static inline uint32_t min(uint32_t a, uint32_t b) {
@@ -203,7 +203,7 @@ int main(int argc, const char** argv) {
     parse_args(argc, argv, &opts);
     if (opts.version) version();
     if (opts.help) usage(NULL);
-    if (!opts.stdin && !opts.filename)
+    if (!opts.read_stdin && !opts.filename)
         usage("missing filename argument");
 
     char const* filename = opts.filename;
@@ -212,7 +212,7 @@ int main(int argc, const char** argv) {
     struct stream stream;
     stream_init(&stream);
     bool success = false;
-    if (opts.stdin) {
+    if (opts.read_stdin) {
         stream.type = STREAM_FP;
         stream.fp = stdin;
         success = true;
@@ -287,7 +287,7 @@ int main(int argc, const char** argv) {
     }
     free(zbuf);
     lzma_end(&zs);
-    if (!opts.stdin) stream_close(&stream);
+    if (!opts.read_stdin) stream_close(&stream);
     return 0;
 }
 #endif

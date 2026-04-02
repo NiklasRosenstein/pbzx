@@ -185,7 +185,7 @@ TEST test_parse_args_no_flags(void) {
     int argc = 2;
     struct options opts = {0};
     parse_args(argc, argv, &opts);
-    ASSERT_FALSE(opts.stdin);
+    ASSERT_FALSE(opts.read_stdin);
     ASSERT_FALSE(opts.noxar);
     ASSERT_FALSE(opts.help);
     ASSERT_FALSE(opts.version);
@@ -198,7 +198,7 @@ TEST test_parse_args_stdin_flag(void) {
     int argc = 2;
     struct options opts = {0};
     parse_args(argc, argv, &opts);
-    ASSERT(opts.stdin);
+    ASSERT(opts.read_stdin);
     ASSERT_EQ(NULL, opts.filename);
     PASS();
 }
@@ -219,7 +219,7 @@ TEST test_parse_args_multiple_flags(void) {
     struct options opts = {0};
     parse_args(argc, argv, &opts);
     ASSERT(opts.noxar);
-    ASSERT(opts.stdin);
+    ASSERT(opts.read_stdin);
     ASSERT_EQ(NULL, opts.filename);
     PASS();
 }
