@@ -178,7 +178,7 @@ static uint32_t stream_read(char* buf, uint32_t size, struct stream* s) {
             }
             return size;
         case STREAM_FP:
-            return fread(buf, size, 1, s->fp);
+            return fread(buf, 1, size, s->fp);
     }
     abort();
 }
