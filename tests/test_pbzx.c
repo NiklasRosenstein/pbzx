@@ -109,13 +109,7 @@ TEST test_stream_read_null_stream(void) {
     PASS();
 }
 
-TEST test_stream_read_fp_returns_item_count(void) {
-    /*
-     * Known issue: stream_read for STREAM_FP calls fread(buf, size, 1, fp)
-     * which returns the number of items (0 or 1), NOT the number of bytes.
-     * The XAR path returns byte count. This inconsistency is latent because
-     * main() never checks the return value of stream_read.
-     */
+TEST test_stream_read_fp_returns_byte_count(void) {
     char tmppath[] = "/tmp/pbzx_test_read_XXXXXX";
     int fd = mkstemp(tmppath);
     ASSERT(fd >= 0);
@@ -127,8 +121,7 @@ TEST test_stream_read_fp_returns_item_count(void) {
 
     char buf[8] = {0};
     uint32_t ret = stream_read(buf, 8, &s);
-    /* Returns 1 (one item of size 8), not 8 (bytes read) */
-    ASSERT_EQ(1, ret);
+    ASSERT_EQ(8, ret);
     ASSERT_MEM_EQ("ABCDEFGH", buf, 8);
 
     stream_close(&s);
@@ -138,7 +131,7 @@ TEST test_stream_read_fp_returns_item_count(void) {
 
 SUITE(suite_stream_read) {
     RUN_TEST(test_stream_read_null_stream);
-    RUN_TEST(test_stream_read_fp_returns_item_count);
+    RUN_TEST(test_stream_read_fp_returns_byte_count);
 }
 
 /* ========== stream_read_64() tests ========== */
