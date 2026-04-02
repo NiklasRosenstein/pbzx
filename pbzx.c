@@ -69,9 +69,9 @@ static void version() {
 }
 
 /* Parses command-line flags into the #options structure. */
-static void parse_args(int* argc, char const** argv, struct options* opts) {
-    opts->filename = NULL;
-    for (int i = 1; i < *argc; ++i) {
+static void parse_args(int argc, char const** argv, struct options* opts) {
+    *opts = (struct options){0};
+    for (int i = 1; i < argc; ++i) {
         if (argv[i][0] != '-') {
             if (opts->filename) usage("unhandled positional argument(s)");
             opts->filename = argv[i];
@@ -200,7 +200,7 @@ static inline size_t cpio_out(char *buffer, size_t size) {
 int main(int argc, const char** argv) {
     /* Parse and validate command-line flags and arguments. */
     struct options opts = {0};
-    parse_args(&argc, argv, &opts);
+    parse_args(argc, argv, &opts);
     if (opts.version) version();
     if (opts.help) usage(NULL);
     if (!opts.stdin && !opts.filename)

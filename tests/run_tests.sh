@@ -187,8 +187,7 @@ else
     fail "D7: empty payload" "non-zero exit"
 fi
 
-# D8: Stream via stdin (using just "-" flag; "-n -" doesn't work due to
-# parse_args multi-flag bug -- only the first flag gets processed)
+# D8: Stream via stdin
 if stdout=$(cat "$FIXTURES/valid_single_lzma.pbzx" | "$PBZX" - 2>/dev/null); then
     expected=$(cat "$FIXTURES/valid_single_lzma.expected")
     if [ "$stdout" = "$expected" ]; then
@@ -223,6 +222,18 @@ if "$PBZX" -n "$FIXTURES/large_chunk.pbzx" 2>/dev/null | shasum -a 256 > "$TMPDI
     fi
 else
     fail "D10: large chunk" "non-zero exit"
+fi
+
+# D11: Stream via stdin with -n flag (noxar + stdin combined)
+if stdout=$(cat "$FIXTURES/valid_single_lzma.pbzx" | "$PBZX" -n - 2>/dev/null); then
+    expected=$(cat "$FIXTURES/valid_single_lzma.expected")
+    if [ "$stdout" = "$expected" ]; then
+        pass "D11: stdin with -n flag"
+    else
+        fail "D11: stdin with -n flag" "output mismatch"
+    fi
+else
+    fail "D11: stdin with -n flag" "non-zero exit"
 fi
 
 # ========== E. Error Handling ==========

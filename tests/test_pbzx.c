@@ -184,7 +184,7 @@ TEST test_parse_args_no_flags(void) {
     const char* argv[] = {"pbzx", "file.pkg"};
     int argc = 2;
     struct options opts = {0};
-    parse_args(&argc, argv, &opts);
+    parse_args(argc, argv, &opts);
     ASSERT_FALSE(opts.stdin);
     ASSERT_FALSE(opts.noxar);
     ASSERT_FALSE(opts.help);
@@ -197,7 +197,7 @@ TEST test_parse_args_stdin_flag(void) {
     const char* argv[] = {"pbzx", "-", NULL};
     int argc = 2;
     struct options opts = {0};
-    parse_args(&argc, argv, &opts);
+    parse_args(argc, argv, &opts);
     ASSERT(opts.stdin);
     ASSERT_EQ(NULL, opts.filename);
     PASS();
@@ -207,7 +207,7 @@ TEST test_parse_args_noxar_flag(void) {
     const char* argv[] = {"pbzx", "-n", "file.bin", NULL};
     int argc = 3;
     struct options opts = {0};
-    parse_args(&argc, argv, &opts);
+    parse_args(argc, argv, &opts);
     ASSERT(opts.noxar);
     ASSERT_STR_EQ("file.bin", opts.filename);
     PASS();
@@ -217,7 +217,7 @@ TEST test_parse_args_multiple_flags(void) {
     const char* argv[] = {"pbzx", "-n", "-", NULL};
     int argc = 3;
     struct options opts = {0};
-    parse_args(&argc, argv, &opts);
+    parse_args(argc, argv, &opts);
     ASSERT(opts.noxar);
     ASSERT(opts.stdin);
     ASSERT_EQ(NULL, opts.filename);
