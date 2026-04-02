@@ -10,18 +10,9 @@ permissions:
 
 jobs:
   build:
-    strategy:
-      matrix:
-        include:
-          - runner: macos-latest
-            arch: arm64
-            deployment_target: '11.0'
-          - runner: macos-15-large
-            arch: x86_64
-            deployment_target: '10.13'
-    runs-on: ${{ matrix.runner }}
+    runs-on: macos-latest
     env:
-      MACOSX_DEPLOYMENT_TARGET: ${{ matrix.deployment_target }}
+      MACOSX_DEPLOYMENT_TARGET: '11.0'
     steps:
       - uses: actions/checkout@v4
 
@@ -46,12 +37,12 @@ jobs:
           fi
 
       - name: Rename binary
-        run: mv pbzx pbzx-darwin-${{ matrix.arch }}
+        run: mv pbzx pbzx-darwin-arm64
 
       - uses: actions/upload-artifact@v4
         with:
-          name: pbzx-darwin-${{ matrix.arch }}
-          path: pbzx-darwin-${{ matrix.arch }}
+          name: pbzx-darwin-arm64
+          path: pbzx-darwin-arm64
 
   release:
     needs: build
@@ -73,12 +64,10 @@ jobs:
           if gh release view "$tag" >/dev/null 2>&1; then
             gh release upload "$tag" \
               --clobber \
-              pbzx-darwin-arm64 \
-              pbzx-darwin-x86_64
+              pbzx-darwin-arm64
           else
             gh release create "$tag" \
               --title "$tag" \
               --generate-notes \
-              pbzx-darwin-arm64 \
-              pbzx-darwin-x86_64
+              pbzx-darwin-arm64
           fi
