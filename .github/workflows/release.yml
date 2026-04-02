@@ -16,7 +16,7 @@ jobs:
           - runner: macos-latest
             arch: arm64
             deployment_target: '11.0'
-          - runner: macos-13
+          - runner: macos-15-large
             arch: x86_64
             deployment_target: '10.13'
     runs-on: ${{ matrix.runner }}
