@@ -184,13 +184,12 @@ TEST test_parse_args_no_flags(void) {
     const char* argv[] = {"pbzx", "file.pkg"};
     int argc = 2;
     struct options opts = {0};
-    parse_args(&argc, argv, &opts);
+    parse_args(argc, argv, &opts);
     ASSERT_FALSE(opts.stdin);
     ASSERT_FALSE(opts.noxar);
     ASSERT_FALSE(opts.help);
     ASSERT_FALSE(opts.version);
-    ASSERT_EQ(2, argc);
-    ASSERT_STR_EQ("file.pkg", argv[1]);
+    ASSERT_STR_EQ("file.pkg", opts.filename);
     PASS();
 }
 
@@ -198,9 +197,9 @@ TEST test_parse_args_stdin_flag(void) {
     const char* argv[] = {"pbzx", "-", NULL};
     int argc = 2;
     struct options opts = {0};
-    parse_args(&argc, argv, &opts);
+    parse_args(argc, argv, &opts);
     ASSERT(opts.stdin);
-    ASSERT_EQ(1, argc);
+    ASSERT_EQ(NULL, opts.filename);
     PASS();
 }
 
@@ -208,31 +207,20 @@ TEST test_parse_args_noxar_flag(void) {
     const char* argv[] = {"pbzx", "-n", "file.bin", NULL};
     int argc = 3;
     struct options opts = {0};
-    parse_args(&argc, argv, &opts);
+    parse_args(argc, argv, &opts);
     ASSERT(opts.noxar);
-    ASSERT_EQ(2, argc);
-    ASSERT_STR_EQ("file.bin", argv[1]);
+    ASSERT_STR_EQ("file.bin", opts.filename);
     PASS();
 }
 
 TEST test_parse_args_multiple_flags(void) {
-    /*
-     * Known issue: parse_args has a bug in its shift logic -- it always
-     * shifts from j=0 instead of j=i, removing argv[0] instead of the
-     * matched flag. Combined with the loop increment, this means only
-     * the first flag after the program name actually gets processed
-     * when multiple flags are passed (e.g. "pbzx -n -").
-     *
-     * This test documents the current (buggy) behavior.
-     */
     const char* argv[] = {"pbzx", "-n", "-", NULL};
     int argc = 3;
     struct options opts = {0};
-    parse_args(&argc, argv, &opts);
+    parse_args(argc, argv, &opts);
     ASSERT(opts.noxar);
-    /* Bug: "-" flag is NOT processed due to shift logic */
-    ASSERT_FALSE(opts.stdin);
-    ASSERT_EQ(2, argc);
+    ASSERT(opts.stdin);
+    ASSERT_EQ(NULL, opts.filename);
     PASS();
 }
 
