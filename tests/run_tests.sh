@@ -45,7 +45,7 @@ fi
 
 # A3: -v flag
 if stdout=$("$PBZX" -v 2>&1); then
-    if echo "$stdout" | grep -q "pbzx v1.0.2"; then
+    if echo "$stdout" | grep -q "pbzx v1.1.0"; then
         pass "A3: -v shows version"
     else
         fail "A3: -v" "output: $stdout"
