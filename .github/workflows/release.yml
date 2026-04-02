@@ -1,0 +1,62 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        include:
+          - runner: macos-latest
+            arch: arm64
+          - runner: macos-13
+            arch: x86_64
+    runs-on: ${{ matrix.runner }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: brew install xz
+
+      - name: Run tests
+        run: make test
+
+      - name: Build release binary
+        run: |
+          make clean
+          make
+
+      - name: Rename binary
+        run: mv pbzx pbzx-darwin-${{ matrix.arch }}
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: pbzx-darwin-${{ matrix.arch }}
+          path: pbzx-darwin-${{ matrix.arch }}
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/download-artifact@v4
+        with:
+          merge-multiple: true
+
+      - name: Create GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          chmod +x pbzx-darwin-*
+          gh release create "${{ github.ref_name }}" \
+            --title "${{ github.ref_name }}" \
+            --generate-notes \
+            pbzx-darwin-arm64 \
+            pbzx-darwin-x86_64
